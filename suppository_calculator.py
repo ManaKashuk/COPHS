@@ -189,7 +189,7 @@ if submitted:
     # -------------------------
     # Capacity & Sanity Checks
     # -------------------------
-    st.markdown("### Capacity & Sanity Checks")
+    st.markdown("### 🧠 Capacity & Sanity Checks")
     if required_base_per_unit < 0:
         st.error("**Negative base per unit (pre-overage)** — API displacement exceeds blank capacity. Consider a larger mold (higher blank weight) or reduce API load.")
     else:
@@ -204,7 +204,7 @@ if submitted:
     # -------------------------
     # Error Checks & Coaching (numeric demonstration)
     # -------------------------
-    st.markdown("### Error Checks & Coaching")
+    st.markdown("### ✔️ Error Checks & Coaching")
 
     if api_mode == "Density (ρ)":
         # WRONG #1: multiply instead of divide (reversing Step 3 logic)
