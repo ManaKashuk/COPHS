@@ -7,7 +7,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Suppository Calculator — Chat", layout="centered")
 
-logo = Image.open("COPHS logo.jpg")     # supports jpg/png
+logo = Image.open("logo.jpg")    
 st.image(logo, width=200)
 st.title("💬 Suppository Base Calculator (GPT-style)")
 st.caption("Chat with the tutor to compute the required base using the 5-step density-ratio method.")
