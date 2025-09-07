@@ -3,7 +3,7 @@ import re
 import json
 import streamlit as st
 
-st.image("COPHS logo.jpg", width=200)   # put the file in the same folder
+st.image("COPHS_logo.jpg", width=200)   # put the file in the same folder
 st.title("💬 Suppository Base Calculator (GPT-style)")
 st.caption("Chat with the tutor to compute the required base using the 5-step density-ratio method.")
 
