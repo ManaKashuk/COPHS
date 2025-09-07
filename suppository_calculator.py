@@ -12,8 +12,8 @@ if LOGO_PATH.exists():
 else:
     st.warning(f"Logo not found at: {LOGO_PATH}")
 
-st.title("💬 Suppository Base Calculator (GPT-style)")
-st.caption("Chat with the tutor to compute the required base using the 5-step density-ratio method.")
+st.title("💬 Suppository Base Calculator")
+st.caption("Compute the required base using the 5-step density-ratio method.")
 
 with st.expander("Method (5 steps)", expanded=False):
     st.markdown("""
