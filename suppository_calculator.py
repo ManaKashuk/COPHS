@@ -87,7 +87,7 @@ with st.sidebar.form("calc_form"):
             "Amount", min_value=0.0, value=200.0 if i == 0 else 0.0, step=0.01, format="%.4f",
             key=f"amt_{i}", label_visibility="collapsed"
         )
-       unit_options = ["μg", "mg", "g", "mL", "IU", "units"]
+    unit_options = ["μg", "mg", "g", "mL", "IU", "units"]
        unit = cols[2].selectbox("Unit", unit_options, index=unit_options.index("mg"), key=f"unit_{i}", label_visibility="collapsed")
 
 
