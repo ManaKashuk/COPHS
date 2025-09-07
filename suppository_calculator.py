@@ -1,16 +1,12 @@
-# suppository_calculator.py
-# Suppository Base Calculator — 5-Step (enhanced pharmacist-friendly version)
-
-import math
 from pathlib import Path
-from PIL import Image
 import streamlit as st
+from PIL import Image
 
-st.set_page_config(page_title="Suppository Base Calculator — 5-Step", layout="centered")
+st.set_page_config(page_title="Suppository Calculator — Chat", layout="centered")
+
 APP_DIR = Path(__file__).parent
 LOGO_PATH = APP_DIR / "logo.png"
 
-# CSS to reduce the space between the image block and the title
 st.markdown("""
 <style>
 /* shrink spacing under images and above/below h1 */
@@ -21,233 +17,96 @@ h1 { margin-top: 0.15rem; margin-bottom: 0.15rem; line-height: 1.05; }
 
 st.image(Image.open(LOGO_PATH), width=150)
 st.markdown("<h1>Suppository Base Calculator</h1>", unsafe_allow_html=True)
-st.markdown("💬 Chat with the tutor to compute the required base using the 5-step density-ratio method.")
+st.caption("📱Compute the required base using the 5-step density-ratio method.")
 
 with st.expander("Method (5 steps)", expanded=False):
     st.markdown("""
-1) **Total API amount**: Sum of all actives for all suppositories.  
-2) **Estimated blank base**: Average blank weight × number of suppositories.  
+1) **Total API amount**: sum of all active ingredients for all suppositories.  
+2) **Estimate blank base weight**: average blank weight × number of suppositories.  
 3) **Density ratio**: ρ(API) / ρ(base).  
-4) **Base displaced**: For a single API, `Total API ÷ (ρ(API)/ρ(base))`. For multiple APIs, sum component displacements: `Σ[(m_i/ρ_i)×ρ_base]`.  
-5) **Required base**: Step 2 − Step 4.
+4) **Base displaced by APIs**: Total API weight ÷ ratio from step 3.  
+5) **Required base**: Estimated blank base (step 2) − Base displaced (step 4).
 """)
 
-# -------------------------
-# Sidebar FORM for inputs
-# -------------------------
-with st.sidebar.form("calc_form"):
-    st.header("Batch Inputs")
-    N = st.number_input("Number of suppositories (N)", min_value=1, value=12, step=1)
+st.sidebar.header("Batch Settings")
+n = st.sidebar.number_input("Number of suppositories", min_value=1, value=1, step=1)
+blank_unit_weight_g = st.sidebar.number_input("Average blank weight per suppository (g)", min_value=0.0, value=2.0, step=0.01, format="%.4f")
+base_density = st.sidebar.number_input("Base density (g/mL)", min_value=0.0001, value=1.0, step=0.01, format="%.4f")
 
-    # Quick-pick bases
-    st.subheader("Base")
-    base_options = {
-        "Cocoa butter (theobroma oil) ~0.90 g/mL": 0.90,
-        "PEG blend (e.g., 1450/1000) ~1.20 g/mL": 1.20,
-        "Glycerinated gelatin ~1.25 g/mL": 1.25,
-        "Witepsol/HBW type ~0.95 g/mL": 0.95,
-        "Custom…": None,
-    }
-    base_choice = st.selectbox("Select base (prefill density)", list(base_options.keys()), index=0)
-    base_density = (
-        base_options[base_choice]
-        if base_options[base_choice] is not None
-        else st.number_input("ρ(base) (g/mL)", min_value=0.0001, value=1.0, step=0.01, format="%.4f")
-    )
-    blank_unit_weight_g = st.number_input(
-        "Average blank weight per unit (g)", min_value=0.0, value=2.00, step=0.01, format="%.4f"
-    )
+st.sidebar.markdown("---")
+st.sidebar.subheader("Active Ingredients")
+max_apis = st.sidebar.number_input("Number of API components", min_value=1, max_value=5, value=1, step=1)
 
-    st.markdown("---")
-    st.subheader("API Entry Mode")
-    api_mode = st.radio(
-        "Choose how to enter API properties",
-        ["Density (ρ)", "Displacement Factor (DF)"],
-        index=0,
-        help="Use DF if you have mold-specific displacement factors for your APIs.",
-    )
-
-    # ===== Active Ingredients (compact grid) =====
-    st.subheader("Active Ingredients (per suppository)")
-    max_apis = st.number_input("How many API components?", min_value=1, max_value=6, value=1, step=1)
-
-    # header row
-    hdr = st.columns([1.9, 1.2, 0.9, 1.4])
-    hdr[0].markdown("**Name**")
-    hdr[1].markdown("**Amt**")
-    hdr[2].markdown("**Unit**")
-    hdr[3].markdown("**ρ (g/mL)**" if api_mode == "Density (ρ)" else "**DF (g/g base)**")
-
-    apis = []
+api_rows = []
 for i in range(int(max_apis)):
-    cols = st.columns([1.9, 1.2, 0.9, 1.4])
+    with st.sidebar.expander(f"API {i+1}", expanded=(i==0)):
+        name = st.text_input(f"Name for API {i+1}", value=f"API {i+1}", key=f"name_{i}")
+        unit = st.selectbox(f"Amount per suppository - unit ({i+1})", options=["mg", "g"], index=0, key=f"unit_{i}")
+        amt = st.number_input(f"Amount per suppository ({unit}) - API {i+1}", min_value=0.0, value=200.0 if i==0 else 0.0, step=0.01, format="%.4f", key=f"amt_{i}")
+        rho = st.number_input(f"Density ρ(API {i+1}) (g/mL)", min_value=0.0001, value=3.0 if i==0 else 1.0, step=0.01, format="%.4f", key=f"rho_{i}")
+    # convert to grams
+    amt_g = amt/1000.0 if unit == "mg" else amt
+    api_rows.append((name, amt_g, rho))
 
-    name = cols[0].text_input("Name", value=f"API {i+1}", key=f"name_{i}", label_visibility="collapsed")
-    amt_value = cols[1].number_input(
-        "Amount", min_value=0.0, value=200.0 if i == 0 else 0.0, step=0.01, format="%.4f",
-        key=f"amt_{i}", label_visibility="collapsed"
-    )
+st.markdown("### Inputs Summary")
+st.write(f"- **Number of suppositories**: {n}")
+st.write(f"- **Average blank weight per unit**: {blank_unit_weight_g:.4f} g")
+st.write(f"- **Base density**: {base_density:.4f} g/mL")
+st.write("#### APIs (per suppository)")
+for name, amt_g, rho in api_rows:
+    st.write(f"- **{name}**: {amt_g:.4f} g, ρ = {rho:.4f} g/mL")
 
-    unit_options = ["μg", "mg", "g", "mL", "IU", "units"]
-    unit = cols[2].selectbox("Unit", unit_options, index=unit_options.index("mg"), key=f"unit_{i}", label_visibility="collapsed")
+# --- Calculations ---
+total_api_weight = sum(amt_g for _, amt_g, _ in api_rows) * n  # g
+estimated_blank_base = blank_unit_weight_g * n  # g
+density_ratio = sum((amt_g for _, amt_g, _ in api_rows))  # not used; ratio is per API; but step uses a single equivalent ratio if APIs mix
+# For multiple APIs, base displaced is sum over components: (m_i / rho_i) * rho_base
+base_displaced = sum((amt_g / rho) * base_density for _, amt_g, rho in api_rows) * n  # g
+# Using step 4 wording: total API weight ÷ (ρ(API)/ρ(base)) when a single API.
+# For multiple APIs we compute component-wise displacement above.
 
-    if api_mode == "Density (ρ)":
-        rho = cols[3].number_input(
-            "rho", min_value=0.0001, value=3.00 if i == 0 else 1.00, step=0.01, format="%.4f",
-            key=f"rho_{i}", label_visibility="collapsed"
-        )
-        df = None
-    else:
-        df = cols[3].number_input(
-            "DF", min_value=0.0001, value=1.50 if i == 0 else 1.00, step=0.01, format="%.4f",
-            key=f"df_{i}", label_visibility="collapsed"
-        )
-        rho = None
+required_base = estimated_blank_base - base_displaced
 
-    amt_g = amt_value / 1000.0 if unit == "mg" else amt_value
-    apis.append({"name": name, "amt_g": amt_g, "rho": rho, "df": df})
+st.markdown("### Step-by-Step Results")
 
-    st.markdown("---")
-    st.subheader("Pharmacy Controls")
-    overage_pct = st.number_input("Overage for base to cover loss (%)", min_value=0.0, value=0.0, step=0.5)
-    round_step = st.selectbox("Round required base to nearest", ["none", "0.001 g", "0.01 g", "0.1 g"], index=1)
+# Step 1
+st.markdown("**Step 1: Total API amount**")
+st.write(f"Total API weight = Σ(amount per unit) × {n} = **{total_api_weight:.4f} g**")
 
-    # >>> IMPORTANT: submit button must be inside this form <<<
-    submitted = st.form_submit_button("Calculate")
+# Step 2
+st.markdown("**Step 2: Estimated blank base weight**")
+st.write(f"Estimated blank base = {blank_unit_weight_g:.4f} g × {n} = **{estimated_blank_base:.4f} g**")
 
-# -------------------------
-# Calculations after submit
-# -------------------------
-if submitted:
-    # Step 1: total API (batch)
-    total_api_per_unit = sum(a["amt_g"] for a in apis)          # g per unit
-    total_api_batch = total_api_per_unit * N                     # g batch
+# Step 3
+st.markdown("**Step 3: Density ratios**")
+for name, amt_g, rho in api_rows:
+    ratio = rho / base_density
+    st.write(f"- {name}: ρ(API)/ρ(base) = {rho:.4f}/{base_density:.4f} = **{ratio:.4f}**")
 
-    # Step 2: estimated blank base (batch)
-    est_blank_batch = blank_unit_weight_g * N                    # g batch
+# Step 4
+st.markdown("**Step 4: Base displaced by APIs**")
+detail_lines = []
+for name, amt_g, rho in api_rows:
+    ratio = rho / base_density
+    displaced_per_unit = amt_g / ratio  # g per suppository
+    displaced_total = displaced_per_unit * n
+    detail_lines.append((name, displaced_per_unit, displaced_total))
+    st.write(f"- {name}: Base displaced per unit = {amt_g:.4f} g ÷ {ratio:.4f} = {displaced_per_unit:.4f} g; total = **{displaced_total:.4f} g**")
 
-    # Step 3 & 4: displacement (supports Density or DF)
-    displaced_per_unit = 0.0
-    ratios = []  # for density mode reporting
+st.write(f"**Total base displaced** (sum of all APIs) = **{base_displaced:.4f} g**")
 
-    if api_mode == "Density (ρ)":
-        for a in apis:
-            if not a["rho"] or a["rho"] <= 0:
-                st.error(f"{a['name']}: API density must be > 0.")
-                st.stop()
-            ratio = a["rho"] / base_density
-            ratios.append((a["name"], ratio, a["rho"]))
-            # per-unit displaced base mass for this API:
-            displaced_per_unit += (a["amt_g"] / ratio)  # g base per unit
-    else:  # DF mode
-        # DF = grams of API that displace 1 g base => displaced base per unit for API i = m_i / DF_i
-        for a in apis:
-            if not a["df"] or a["df"] <= 0:
-                st.error(f"{a['name']}: DF must be > 0.")
-                st.stop()
-            displaced_per_unit += (a["amt_g"] / a["df"])  # g base per unit
+# Step 5
+st.markdown("**Step 5: Required base**")
+st.write(f"Required base = Estimated blank base − Base displaced = {estimated_blank_base:.4f} − {base_displaced:.4f} = **{required_base:.4f} g**")
 
-    displaced_batch = displaced_per_unit * N
-    required_base_per_unit = blank_unit_weight_g - displaced_per_unit
-    required_base_batch = est_blank_batch - displaced_batch
+# 3) Sanity checks
+if required_base < 0:
+    st.warning("The required base is negative. Your blank weight may be too small or API load too high for this mold.")
+if any(rho <= 0 for _, _, rho in api_rows) or base_density <= 0:
+    st.warning("Densities must be positive values.")
 
-    # Apply overage to required base (batch)
-    if overage_pct > 0:
-        required_base_batch *= (1 + overage_pct / 100.0)
+st.markdown("---")
+st.markdown("**Tip:** For a single API, Step 4 can be written as: Base displaced = Total API × (ρ(base)/ρ(API)). "
+            "This is algebraically identical to dividing by the Step-3 ratio.")
 
-    # Rounding
-    required_base_batch = round_to(required_base_batch, round_step)
-
-    # Derived per-unit after rounding batch (approx evenly split)
-    required_base_per_unit_out = required_base_batch / N
-
-    # ===== Display results =====
-    st.markdown("### Step-by-Step Results")
-    st.markdown("**Step 1: Total API amount**")
-    st.write(f"Per unit = **{total_api_per_unit:.4f} g**; Batch (×{N}) = **{total_api_batch:.4f} g**")
-
-    st.markdown("**Step 2: Estimated blank base**")
-    st.write(f"Per unit = **{blank_unit_weight_g:.4f} g**; Batch (×{N}) = **{est_blank_batch:.4f} g**")
-
-    if api_mode == "Density (ρ)":
-        st.markdown("**Step 3: Density ratio ρ(API)/ρ(base)**")
-        st.write(f"ρ(base) = **{base_density:.4f} g/mL**")
-        for name, ratio, rho_api in ratios:
-            st.write(f"- {name}: {rho_api:.4f}/{base_density:.4f} = **{ratio:.4f}**")
-    else:
-        st.markdown("**Step 3: Displacement Factor (DF) mode**")
-        for a in apis:
-            st.write(f"- {a['name']}: DF = **{a['df']:.4f}** (g API per 1 g base)")
-
-    st.markdown("**Step 4: Base displaced by APIs**")
-    st.write(f"Per unit displaced base = **{displaced_per_unit:.4f} g**; Batch displaced base = **{displaced_batch:.4f} g**")
-
-    st.markdown("**Step 5: Required base**")
-    st.write(f"Per unit required base = **{required_base_per_unit_out:.4f} g**; Batch required base = **{required_base_batch:.4f} g**")
-
-    st.divider()
-
-    # ===== Capacity & sanity checks =====
-    st.markdown("### Capacity & Sanity Checks")
-    if required_base_per_unit < 0:
-        st.error("**Negative base per unit (pre-overage)** — API displacement exceeds blank capacity.")
-    else:
-        st.success("Per-unit base amount is non-negative.")
-
-    if displaced_per_unit > blank_unit_weight_g:
-        st.warning("**API volume alone exceeds blank weight** — APIs displace more base than the mold holds.")
-    if base_density <= 0:
-        st.error("Base density must be > 0.")
-
-    # ===== Error coaching (only in density mode) =====
-    st.markdown("### Error Checks & Coaching")
-    if api_mode == "Density (ρ)":
-        wrong_displaced_per_unit = 0.0
-        for a in apis:
-            ratio = a["rho"] / base_density
-            wrong_displaced_per_unit += a["amt_g"] * ratio  # WRONG
-        wrong_displaced_batch = wrong_displaced_per_unit * N
-        wrong_required_batch = est_blank_batch - wrong_displaced_batch
-        diff = abs(wrong_required_batch - (est_blank_batch - displaced_batch))
-
-        st.markdown(
-            f"**Common mistake detected (reversing Step 3):** If you used ρ(base)/ρ(API) and then multiplied by the ratio in Step 4, "
-            f"you'd compute base displaced = **{wrong_displaced_batch:.4f} g**, leading to required base = **{wrong_required_batch:.4f} g** "
-            f"(off by **{diff:.4f} g**). Remember: Step 3 ratio is ρ(API)/ρ(base), and Step 4 is **divide** total API weight by that ratio."
-        )
-
-        direct_subtract_required_batch = est_blank_batch - total_api_batch
-        st.markdown(
-            f"**Another mistake:** Subtracting API weight directly from the blank base would give **{direct_subtract_required_batch:.4f} g**, "
-            "which ignores displacement by density. Use the density ratio to find the base displaced, not the API weight."
-        )
-
-        st.markdown(
-            "**Tip:** For a single API, Step 4 can be written as: Base displaced = Total API × (ρ(base)/ρ(API)). "
-            "This is algebraically identical to dividing by the Step-3 ratio."
-        )
-    else:
-        st.info("In **DF mode**, per-unit displaced base = Σ(m_i / DF_i). Avoid subtracting API mass directly from blank base.")
-
-else:
-    st.info("Enter inputs in the sidebar and click **Calculate** to see results.")
-
-    # -------------------------
-    # Minimal export (CSV-like text)
-    # -------------------------
-    st.markdown("### Export")
-    lines = [
-        "Suppository Base Calculator — 5-Step",
-        f"N,{N}",
-        f"Blank per unit (g),{blank_unit_weight_g:.4f}",
-        f"Base density (g/mL),{base_density:.4f}",
-        f"Mode,{api_mode}",
-    ]
-    for a in apis:
-        if api_mode == "Density (ρ)":
-            lines.append(f"{a['name']} amount per unit (g),{a['amt_g']:.4f},rho,{a['rho']:.4f}")
-        else:
-            lines.append(f"{a['name']} amount per unit (g),{a['amt_g']:.4f},DF,{a['df']:.4f}")
-        
-    csv_text = "\n".join(lines)
-    st.download_button("Download results (CSV)", data=csv_text, file_name="suppository_calculation.csv", mime="text/csv")
+st.caption("Educational tool only; verify with your PI/Instructor")
