@@ -79,7 +79,7 @@ with st.sidebar.form("calc_form"):
     hdr[3].markdown("**ρ (g/mL)**" if api_mode == "Density (ρ)" else "**DF (g/g base)**")
 
     apis = []
-    for i in range(int(max_apis)):
+for i in range(int(max_apis)):
     cols = st.columns([1.9, 1.2, 0.9, 1.4])
 
     name = cols[0].text_input("Name", value=f"API {i+1}", key=f"name_{i}", label_visibility="collapsed")
