@@ -107,7 +107,6 @@ for i in range(int(max_apis)):
     amt_g = amt_value / 1000.0 if unit == "mg" else amt_value
     apis.append({"name": name, "amt_g": amt_g, "rho": rho, "df": df})
 
-
     st.markdown("---")
     st.subheader("Pharmacy Controls")
     overage_pct = st.number_input("Overage for base to cover loss (%)", min_value=0.0, value=0.0, step=0.5)
@@ -115,7 +114,6 @@ for i in range(int(max_apis)):
 
     # >>> IMPORTANT: submit button must be inside this form <<<
     submitted = st.form_submit_button("Calculate")
-
 
 # -------------------------
 # Calculations after submit
