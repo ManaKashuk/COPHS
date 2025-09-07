@@ -32,6 +32,7 @@ with st.expander("Method (5 steps)", expanded=False):
 # -------------------------
 # Use sidebar inputs directly
 # -------------------------
+    with st.sidebar.form("calc_form"):
     st.header("Batch Inputs")
     N = st.number_input("Number of suppositories (N)", min_value=1, value=12, step=1)
 
