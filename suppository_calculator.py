@@ -232,56 +232,6 @@ else:
     st.info("Enter inputs in the sidebar and click **Calculate** to see results.")
 
     # -------------------------
-    # Capacity & Sanity Checks
-    # -------------------------
-    st.markdown("### Capacity & Sanity Checks")
-    if required_base_per_unit < 0:
-        st.error("**Negative base per unit (pre-overage)** — API displacement exceeds blank capacity. Consider a larger mold (higher blank weight) or reduce API load.")
-    else:
-        st.success("Per-unit base amount is non-negative.")
-
-    if displaced_per_unit > blank_unit_weight_g:
-        st.warning("**API volume alone exceeds blank weight** — The APIs displace more base than the mold is intended to hold.")
-
-    if base_density <= 0:
-        st.error("Base density must be > 0.")
-
-    # -------------------------
-    # Error Checks & Coaching (numeric demonstration)
-    # -------------------------
-    st.markdown("### Error Checks & Coaching")
-
-    if api_mode == "Density (ρ)":
-        # WRONG #1: multiply instead of divide (reversing Step 3 logic)
-        wrong_displaced_per_unit = 0.0
-        for a in apis:
-            ratio = a["rho"] / base_density
-            wrong_displaced_per_unit += a["amt_g"] * ratio  # WRONG
-        wrong_displaced_batch = wrong_displaced_per_unit * N
-        wrong_required_batch = est_blank_batch - wrong_displaced_batch
-        diff = abs(wrong_required_batch - (est_blank_batch - displaced_batch))
-
-        st.markdown(
-            f"**Common mistake detected (reversing Step 3):** If you used ρ(base)/ρ(API) and then multiplied by the ratio in Step 4, "
-            f"you'd compute base displaced = **{wrong_displaced_batch:.4f} g**, leading to required base = **{wrong_required_batch:.4f} g** "
-            f"(off by **{diff:.4f} g**). Remember: Step 3 ratio is ρ(API)/ρ(base), and Step 4 is **divide** total API weight by that ratio."
-        )
-
-        # WRONG #2: subtract API mass directly from blank base
-        direct_subtract_required_batch = est_blank_batch - total_api_batch
-        st.markdown(
-            f"**Another mistake:** Subtracting API weight directly from the blank base would give **{direct_subtract_required_batch:.4f} g**, "
-            "which ignores displacement by density. Use the density ratio to find the base displaced, not the API weight."
-        )
-
-        st.markdown(
-            "**Tip:** For a single API, Step 4 can be written as: Base displaced = Total API × (ρ(base)/ρ(API)). "
-            "This is algebraically identical to dividing by the Step-3 ratio."
-        )
-    else:
-        st.info("In **DF mode**, compute displaced base with: per-unit displaced base = Σ(m_i / DF_i). Avoid subtracting API mass directly from blank base.")
-
-    # -------------------------
     # Minimal export (CSV-like text)
     # -------------------------
     st.markdown("### Export")
