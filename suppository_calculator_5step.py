@@ -76,27 +76,6 @@ st.write(f"{estimated_blank_base:.4f} − {base_displaced:.4f} = **{required_bas
 
 st.divider()
 
-# --- Error Checks & Coaching (exact phrasing requested) ---
-# Simulate the two common errors using the same inputs to produce example text
-# Wrong 1: reversing Step 3 and multiplying instead of dividing
-wrong_displaced = sum(a["amt_g"] * (a["rho"] / base_density) for a in apis) * n  # WRONG
-wrong_required = estimated_blank_base - wrong_displaced
-diff = abs(wrong_required - required_base)
-
-direct_subtract_required = estimated_blank_base - sum(a["amt_g"] for a in apis) * n
-
-st.markdown("### Error Checks & Coaching")
-st.markdown(
-    f"**Common mistake detected (reversing Step 3):** If you used ρ(base)/ρ(API) and then multiplied by the ratio in Step 4, "
-    f"you'd compute base displaced = **{wrong_displaced:.4f} g**, leading to required base = **{wrong_required:.4f} g** "
-    f"(off by **{diff:.4f} g**). Remember: Step 3 ratio is ρ(API)/ρ(base), and Step 4 is **divide** total API weight by that ratio."
-)
-
-st.markdown(
-    f"**Another mistake:** Subtracting API weight directly from the blank base would give **{direct_subtract_required:.4f} g**, "
-    "which ignores displacement by density. Use the density ratio to find the base displaced, not the API weight."
-)
-
 st.markdown(
     "**Tip:** For a single API, Step 4 can be written as: Base displaced = Total API × (ρ(base)/ρ(API)). "
     "This is algebraically identical to dividing by the Step-3 ratio."
