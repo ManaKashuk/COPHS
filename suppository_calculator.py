@@ -310,5 +310,5 @@ else:
     ]
     csv_text = "\n".join(lines)
     st.download_button("Download results (CSV)", data=csv_text, file_name="suppository_calculation.csv", mime="text/csv")
-else:
+      else:
     st.info("Enter inputs in the sidebar and click **Calculate** to see results.")
