@@ -65,31 +65,20 @@ with st.sidebar.form("calc_form"):
     apis = []
     for i in range(int(max_apis)):
         st.markdown(f"**API {i+1}**")
-        cols = st.columns([2, 1, 1, 1])
+        cols = st.columns([1, 1, 1])
         with cols[0]:
-            name = st.text_input(f"Name (API {i+1})", value=f"API {i+1}", key=f"name_{i}")
+            amt_value = st.number_input(f"Amount ({i+1})", min_value=0.0, value=200.0 if i == 0 else 0.0, step=0.01, format="%.4f", key=f"amt_{i}")
         with cols[1]:
-            amt_value = st.number_input(
-                f"Amount ({i+1})", min_value=0.0, value=200.0 if i == 0 else 0.0, step=0.01, format="%.4f", key=f"amt_{i}"
-            )
-        with cols[2]:
             unit = st.selectbox(f"Unit ({i+1})", ["mg", "g"], index=0, key=f"unit_{i}")
-        with cols[3]:
+        with cols[2]:
             if api_mode == "Density (ρ)":
-                rho = st.number_input(
-                    f"ρ(API {i+1}) (g/mL)", min_value=0.0001, value=3.00 if i == 0 else 1.00, step=0.01, format="%.4f", key=f"rho_{i}"
-                )
+                rho = st.number_input(f"ρ (g/mL)", min_value=0.0001, value=3.00 if i == 0 else 1.00, step=0.01, format="%.4f", key=f"rho_{i}")
                 df = None
             else:
-                # DF mode: displacement factor DF = grams of API that displace 1 gram of base
-                df = st.number_input(
-                    f"DF(API {i+1}) (g API per 1 g base)", min_value=0.0001, value=1.50 if i == 0 else 1.00,
-                    step=0.01, format="%.4f", key=f"df_{i}"
-                )
+                df = st.number_input(f"DF (g API per 1 g base)", min_value=0.0001, value=1.50 if i == 0 else 1.00, step=0.01, format="%.4f", key=f"df_{i}")
                 rho = None
-
         amt_g = amt_value / 1000.0 if unit == "mg" else amt_value
-        apis.append({"name": name, "amt_g": amt_g, "rho": rho, "df": df})
+        apis.append({"name": f"API {i+1}", "amt_g": amt_g, "rho": rho, "df": df})
 
     st.markdown("---")
     st.subheader("Pharmacy Controls")
