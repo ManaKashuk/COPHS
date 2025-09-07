@@ -33,6 +33,7 @@ with st.expander("Method (5 steps)", expanded=False):
 # Sidebar FORM for inputs
 # -------------------------
     # Quick-pick bases
+    st.markdown("---")
     st.subheader("Base")
     base_options = {
         "Cocoa butter (theobroma oil) ~0.90 g/mL": 0.90,
