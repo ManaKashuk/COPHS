@@ -4,7 +4,7 @@ st.set_page_config(page_title="Suppository Base Calculator — 5-Step", layout="
 
 # Load and display the COPHS logo at the top
 logo = Image.open("COPHS logo.jpg")
-st.image(COPHS logo, width=200)
+st.image(logo, width=200)
 
 st.title("Suppository Base Calculator — 5-Step Method")
 st.caption("Implements only the five-step density-ratio calculator plus error checks/coaching.")
