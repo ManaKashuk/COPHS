@@ -12,14 +12,14 @@ LOGO_PATH = APP_DIR / "logo.png"
 st.markdown("""
 <style>
 /* shrink spacing under images and above/below h1 */
-div.stImage { margin-bottom: -2rem; }
+div.stImage { margin-bottom: -2.5rem; }
 h1 { margin-top: 0.15rem; margin-bottom: 0.15rem; line-height: 1.05; }
 </style>
 """, unsafe_allow_html=True)
 
 st.image(Image.open(LOGO_PATH), width=150)
 st.markdown("<h1>Suppository Base Calculator</h1>", unsafe_allow_html=True)
-st.caption("🗨️Chat with the tutor to compute the required base using the 5-step density-ratio method.")
+st.markdown("🗨️Chat with the tutor to compute the required base using the 5-step density-ratio method.")
 with st.expander("Method (5 steps)", expanded=False):
     st.markdown("""
 1) **Total API amount**: Sum of all actives for all suppositories.  
@@ -272,4 +272,4 @@ else:
 st.markdown("**Tip:** For a single API, Step 4 can be written as: Base displaced = Total API × (ρ(base)/ρ(API)). "
             "This is algebraically identical to dividing by the Step-3 ratio.")
     
-st.caption("Educational tool only; verify with your PI/Instructor")
+st.caption("🧑‍🎓Educational tool only; verify with your PI/Instructor📚")
