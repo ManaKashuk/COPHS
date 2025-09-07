@@ -11,7 +11,7 @@ st.markdown("""
 <style>
 /* shrink spacing under images and above/below h1 */
 div.stImage { margin-bottom: 0rem; }
-h1 { margin-top: 0rem; margin-bottom: 0rem; line-height: 1.05; }
+h1 { margin-top: 0rem; margin-bottom: 0rem; line-height: 0; }
 </style>
 """, unsafe_allow_html=True)
 
