@@ -74,8 +74,6 @@ st.write(f"**Total base displaced** = **{base_displaced:.4f} g**")
 st.markdown("**Step 5: Required base**")
 st.write(f"{estimated_blank_base:.4f} − {base_displaced:.4f} = **{required_base:.4f} g**")
 
-st.divider()
-
 st.markdown(
     "**Tip:** For a single API, Step 4 can be written as: Base displaced = Total API × (ρ(base)/ρ(API)). "
     "This is algebraically identical to dividing by the Step-3 ratio."
