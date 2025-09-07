@@ -17,7 +17,7 @@ h1 { margin-top: 0.15rem; margin-bottom: 0.15rem; line-height: 1.05; }
 </style>
 """, unsafe_allow_html=True)
 
-st.image(Image.open(LOGO_PATH), width=150)
+st.image(Image.open(LOGO_PATH), width=120)
 st.markdown("<h1>Suppository Base Calculator</h1>", unsafe_allow_html=True)
 st.markdown("<h6>🗨️ Chat with an AI tutor to compute the required base using the 5-step density-ratio method.</div>", unsafe_allow_html=True)
 
