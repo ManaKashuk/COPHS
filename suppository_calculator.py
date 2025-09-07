@@ -260,7 +260,7 @@ st.markdown(
     """
     <hr style="margin-top:2rem; margin-bottom:0.5rem;">
     <div style="text-align:center; font-size:0.9rem; color:gray;">
-        © 2025 COPHS<br>
+        © 2025 College of Pharmacy and Health Sciences<br>
         For citation (APA): College of Pharmacy and Health Sciences. (2025). 
         <i>COPHS Suppository Base Calculator</i> [Computer software]. 
         <a href="https://cophs-calculator.streamlit.app/" target="_blank">
