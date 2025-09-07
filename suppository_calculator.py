@@ -80,15 +80,6 @@ with st.sidebar.form("calc_form"):
 
     apis = []
     for i in range(int(max_apis)):
-        cols = st.columns([1.9, 1.2, 0.9, 1.4])
-
-        name = cols[0].text_input("Name", value=f"API {i+1}", key=f"name_{i}", label_visibility="collapsed")
-        amt_value = cols[1].number_input(
-            "Amount", min_value=0.0, value=200.0 if i == 0 else 0.0, step=0.01, format="%.4f",
-            key=f"amt_{i}", label_visibility="collapsed"
-        )
-    
-    for i in range(int(max_apis)):
     cols = st.columns([1.9, 1.2, 0.9, 1.4])
 
     name = cols[0].text_input("Name", value=f"API {i+1}", key=f"name_{i}", label_visibility="collapsed")
@@ -116,22 +107,6 @@ with st.sidebar.form("calc_form"):
     amt_g = amt_value / 1000.0 if unit == "mg" else amt_value
     apis.append({"name": name, "amt_g": amt_g, "rho": rho, "df": df})
 
-
-        if api_mode == "Density (ρ)":
-            rho = cols[3].number_input(
-                "rho", min_value=0.0001, value=3.00 if i == 0 else 1.00, step=0.01, format="%.4f",
-                key=f"rho_{i}", label_visibility="collapsed"
-            )
-            df = None
-        else:
-            df = cols[3].number_input(
-                "DF", min_value=0.0001, value=1.50 if i == 0 else 1.00, step=0.01, format="%.4f",
-                key=f"df_{i}", label_visibility="collapsed"
-            )
-            rho = None
-
-        amt_g = amt_value/1000.0 if unit == "mg" else amt_value
-        apis.append({"name": name, "amt_g": amt_g, "rho": rho, "df": df})
 
     st.markdown("---")
     st.subheader("Pharmacy Controls")
