@@ -49,10 +49,14 @@ with st.sidebar.form("calc_form"):
         "Custom…": None,
     }
     base_choice = st.selectbox("Select base (prefill density)", list(base_options.keys()), index=0)
-    base_density = base_options[base_choice] if base_options[base_choice] else st.number_input(
-        "ρ(base) (g/mL)", min_value=0.0001, value=1.0, step=0.01, format="%.4f"
+    base_density = (
+        base_options[base_choice]
+        if base_options[base_choice] is not None
+        else st.number_input("ρ(base) (g/mL)", min_value=0.0001, value=1.0, step=0.01, format="%.4f")
     )
-    blank_unit_weight_g = st.number_input("Average blank weight per unit (g)", min_value=0.0, value=2.00, step=0.01, format="%.4f")
+    blank_unit_weight_g = st.number_input(
+        "Average blank weight per unit (g)", min_value=0.0, value=2.00, step=0.01, format="%.4f"
+    )
 
     st.markdown("---")
     st.subheader("API Entry Mode")
@@ -63,65 +67,52 @@ with st.sidebar.form("calc_form"):
         help="Use DF if you have mold-specific displacement factors for your APIs.",
     )
 
+    # ===== Active Ingredients (compact grid) =====
     st.subheader("Active Ingredients (per suppository)")
-max_apis = st.number_input("How many API components?", min_value=1, max_value=6, value=1, step=1)
+    max_apis = st.number_input("How many API components?", min_value=1, max_value=6, value=1, step=1)
 
-# compact header row so users see what each column is
-hdr = st.columns([1.9, 1.2, 0.9, 1.4])
-hdr[0].markdown("**Name**")
-hdr[1].markdown("**Amt**")
-hdr[2].markdown("**Unit**")
-hdr[3].markdown("**ρ (g/mL)**" if api_mode == "Density (ρ)" else "**DF (g/g base)**")
+    # header row
+    hdr = st.columns([1.9, 1.2, 0.9, 1.4])
+    hdr[0].markdown("**Name**")
+    hdr[1].markdown("**Amt**")
+    hdr[2].markdown("**Unit**")
+    hdr[3].markdown("**ρ (g/mL)**" if api_mode == "Density (ρ)" else "**DF (g/g base)**")
 
-apis = []
-for i in range(int(max_apis)):
-    cols = st.columns([1.9, 1.2, 0.9, 1.4])
+    apis = []
+    for i in range(int(max_apis)):
+        cols = st.columns([1.9, 1.2, 0.9, 1.4])
 
-    # short, collapsed labels keep the layout tight in the sidebar
-    name = cols[0].text_input(
-        "Name", value=(f"API {i+1}"),
-        key=f"name_{i}", label_visibility="collapsed"
-    )
-
-    amt_value = cols[1].number_input(
-        "Amount", min_value=0.0, value=200.0 if i == 0 else 0.0,
-        step=0.01, format="%.4f", key=f"amt_{i}", label_visibility="collapsed"
-    )
-
-    unit = cols[2].selectbox(
-        "Unit", ["mg", "g"], index=0, key=f"unit_{i}", label_visibility="collapsed"
-    )
-
-    if api_mode == "Density (ρ)":
-        rho = cols[3].number_input(
-            "rho", min_value=0.0001, value=3.00 if i == 0 else 1.00,
-            step=0.01, format="%.4f", key=f"rho_{i}", label_visibility="collapsed"
+        name = cols[0].text_input("Name", value=f"API {i+1}", key=f"name_{i}", label_visibility="collapsed")
+        amt_value = cols[1].number_input(
+            "Amount", min_value=0.0, value=200.0 if i == 0 else 0.0, step=0.01, format="%.4f",
+            key=f"amt_{i}", label_visibility="collapsed"
         )
-        df = None
-    else:
-        df = cols[3].number_input(
-            "DF", min_value=0.0001, value=1.50 if i == 0 else 1.00,
-            step=0.01, format="%.4f", key=f"df_{i}", label_visibility="collapsed"
-        )
-        rho = None
+        unit = cols[2].selectbox("Unit", ["mg", "g"], index=0, key=f"unit_{i}", label_visibility="collapsed")
 
-    amt_g = amt_value/1000.0 if unit == "mg" else amt_value
-    apis.append({"name": name, "amt_g": amt_g, "rho": rho, "df": df})
+        if api_mode == "Density (ρ)":
+            rho = cols[3].number_input(
+                "rho", min_value=0.0001, value=3.00 if i == 0 else 1.00, step=0.01, format="%.4f",
+                key=f"rho_{i}", label_visibility="collapsed"
+            )
+            df = None
+        else:
+            df = cols[3].number_input(
+                "DF", min_value=0.0001, value=1.50 if i == 0 else 1.00, step=0.01, format="%.4f",
+                key=f"df_{i}", label_visibility="collapsed"
+            )
+            rho = None
+
+        amt_g = amt_value/1000.0 if unit == "mg" else amt_value
+        apis.append({"name": name, "amt_g": amt_g, "rho": rho, "df": df})
 
     st.markdown("---")
     st.subheader("Pharmacy Controls")
     overage_pct = st.number_input("Overage for base to cover loss (%)", min_value=0.0, value=0.0, step=0.5)
     round_step = st.selectbox("Round required base to nearest", ["none", "0.001 g", "0.01 g", "0.1 g"], index=1)
 
+    # >>> IMPORTANT: submit button must be inside this form <<<
     submitted = st.form_submit_button("Calculate")
 
-def round_to(x, step_label):
-    if step_label == "none":
-        return x
-    step = {"0.001 g": 0.001, "0.01 g": 0.01, "0.1 g": 0.1}[step_label]
-    if step <= 0:
-        return x
-    return round(x / step) * step
 
 # -------------------------
 # Calculations after submit
