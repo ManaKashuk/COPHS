@@ -4,7 +4,7 @@ import streamlit as st
 st.set_page_config(page_title="Suppository Base Calculator", layout="centered")
 
 st.title("Suppository Base Calculator")
-st.caption("Implements the 5-step *density-ratio* method used in PharmCalculator’s Education Corner.")
+st.caption("Implements the 5-step *density-ratio* method.")
 
 with st.expander("Method (5 steps)", expanded=False):
     st.markdown("""
