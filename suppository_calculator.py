@@ -22,7 +22,7 @@ left, right = st.columns([1, 9])
 with left:
     st.image(Image.open(LOGO_PATH), width=64)  # tweak width to your liking
 with right:
-st.markdown("<h1>💬 Suppository Base Calculator</h1>", unsafe_allow_html=True)
+st.title("<h1>💬 Suppository Base Calculator</h1>", unsafe_allow_html=True)
 st.caption("Compute the required base using the 5-step density-ratio method.")
 
 with st.expander("Method (5 steps)", expanded=False):
