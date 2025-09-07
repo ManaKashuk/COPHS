@@ -220,7 +220,7 @@ if submitted:
         st.info("In **DF mode**, compute displaced base with: per-unit displaced base = Σ(m_i / DF_i). Avoid subtracting API mass directly from blank base.")
 
     # Export
-    st.markdown("### Export")
+    st.markdown("### 💻Export")
     lines = [
         "Suppository Base Calculator — 5-Step",
         f"N,{N}",
