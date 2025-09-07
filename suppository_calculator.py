@@ -96,23 +96,6 @@ reversed_displaced = sum((amt_g * (base_density / rho)) for _, amt_g, rho in api
 wrong_displaced = sum((amt_g) * (rho / base_density) for _, amt_g, rho in api_rows) * n  # WRONG: total_api × ratio (instead of ÷)
 wrong_required = estimated_blank_base - wrong_displaced
 
-if wrong_displaced != base_displaced:
-    diff = abs(wrong_required - required_base)
-    st.error(
-        f"**Common mistake detected (reversing Step 3):** "
-        f"If you used ρ(base)/ρ(API) and then multiplied by the ratio in Step 4, you'd compute base displaced = {wrong_displaced:.4f} g, "
-        f"leading to required base = {wrong_required:.4f} g (off by {diff:.4f} g). "
-        "Remember: Step 3 ratio is ρ(API)/ρ(base), and Step 4 is **divide** total API weight by that ratio."
-    )
-
-# 2) Subtracting API weight directly from blank base
-direct_subtract_required = estimated_blank_base - total_api_weight
-if abs(direct_subtract_required - required_base) > 1e-6:
-    st.warning(
-        f"**Another mistake:** Subtracting API weight directly from the blank base would give {direct_subtract_required:.4f} g, "
-        f"which ignores displacement by density. Use the density ratio to find the **base displaced**, not the API weight."
-    )
-
 # 3) Sanity checks
 if required_base < 0:
     st.warning("The required base is negative. Your blank weight may be too small or API load too high for this mold.")
