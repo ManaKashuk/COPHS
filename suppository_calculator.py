@@ -1,10 +1,13 @@
 
+from PIL import Image
 import streamlit as st
 
-st.set_page_config(page_title="Suppository Base Calculator", layout="centered")
+st.set_page_config(page_title="Suppository Calculator — Chat", layout="centered")
 
-st.title("Suppository Base Calculator")
-st.caption("Implements the 5-step *density-ratio* method.")
+logo = Image.open("COPHS logo.jpg")     # supports jpg/png
+st.image(logo, width=200)
+st.title("💬 Suppository Base Calculator (GPT-style)")
+st.caption("Chat with the tutor to compute the required base using the 5-step density-ratio method.")
 
 with st.expander("Method (5 steps)", expanded=False):
     st.markdown("""
