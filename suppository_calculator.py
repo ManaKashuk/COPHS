@@ -32,7 +32,7 @@ with st.expander("Method (5 steps)", expanded=False):
 # -------------------------
 # Sidebar FORM for inputs
 # -------------------------
-    # Quick-pick bases
+    st.sidebar.subheader("Quick-pick bases")
     st.markdown("---")
     st.subheader("Base")
     base_options = {
