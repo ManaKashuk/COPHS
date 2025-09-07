@@ -88,7 +88,7 @@ with st.sidebar.form("calc_form"):
             key=f"amt_{i}", label_visibility="collapsed"
         )
     unit_options = ["μg", "mg", "g", "mL", "IU", "units"]
-       unit = cols[2].selectbox("Unit", unit_options, index=unit_options.index("mg"), key=f"unit_{i}", label_visibility="collapsed")
+    unit = cols[2].selectbox("Unit", unit_options, index=unit_options.index("mg"), key=f"unit_{i}", label_visibility="collapsed")
 
 
         if api_mode == "Density (ρ)":
