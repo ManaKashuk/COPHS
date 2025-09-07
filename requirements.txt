@@ -1,4 +1,0 @@
-conda create -n streamlit-env python=3.11
-conda activate streamlit-env
-pip install streamlit pillow
-pillow>=9.0
