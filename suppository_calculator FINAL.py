@@ -6,37 +6,20 @@ from pathlib import Path
 from PIL import Image
 import streamlit as st
 
-st.set_page_config(page_title="Suppository Base Calculator — 5-Step", layout="centered")
-
-# --- Compact header styling (minimal spacing) ---
-st.markdown('''
-<style>
-div.stImage { margin: 0 !important; }
-h1 { margin: 0 !important; padding: 0 !important; line-height: 1 !important; }
-.block-container { padding-top: 0.4rem !important; }
-</style>
-''', unsafe_allow_html=True)
-
-# --- Logo (robust relative path) ---
 APP_DIR = Path(__file__).parent
-candidates = [
-    APP_DIR / "COPHS_logo.png",
-    APP_DIR / "COPHS_logo.jpg",
-    APP_DIR / "assets" / "COPHS_logo.png",
-    APP_DIR / "assets" / "COPHS_logo.jpg",
-    APP_DIR / "logo.png",
-    APP_DIR / "logo.jpg",
-]
-logo_path = next((p for p in candidates if p.exists()), None)
+LOGO_PATH = APP_DIR / "logo.png"
 
-cols = st.columns([1, 9])
-with cols[0]:
-    if logo_path:
-        st.image(Image.open(logo_path), width=64)
-with cols[1]:
-    st.markdown("<h1>Suppository Base Calculator — 5-Step</h1>", unsafe_allow_html=True)
-st.caption("Batch calculator using the density-ratio method with pharmacist-friendly checks and coaching.")
+st.markdown("""
+<style>
+/* shrink spacing under images and above/below h1 */
+div.stImage { margin-bottom: -2rem; }
+h1 { margin-top: 0.15rem; margin-bottom: 0.15rem; line-height: 1.05; }
+</style>
+""", unsafe_allow_html=True)
 
+st.image(Image.open(LOGO_PATH), width=150)
+st.markdown("<h1>Suppository Base Calculator</h1>", unsafe_allow_html=True)
+st.caption("📱Chat with the tutor to compute the required base using the 5-step density-ratio method.")
 with st.expander("Method (5 steps)", expanded=False):
     st.markdown("""
 1) **Total API amount**: Sum of all actives for all suppositories.  
