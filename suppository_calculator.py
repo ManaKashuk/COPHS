@@ -138,20 +138,14 @@ if submitted:
     # Derived per-unit after rounding batch (approx evenly split)
     required_base_per_unit_out = required_base_batch / N
 
-    # -------------------------
-    # Stepwise Output
-    # -------------------------
+    # ===== Display results =====
     st.markdown("### Step-by-Step Results")
-
-    # Step 1
     st.markdown("**Step 1: Total API amount**")
     st.write(f"Per unit = **{total_api_per_unit:.4f} g**; Batch (×{N}) = **{total_api_batch:.4f} g**")
 
-    # Step 2
     st.markdown("**Step 2: Estimated blank base**")
     st.write(f"Per unit = **{blank_unit_weight_g:.4f} g**; Batch (×{N}) = **{est_blank_batch:.4f} g**")
 
-    # Step 3
     if api_mode == "Density (ρ)":
         st.markdown("**Step 3: Density ratio ρ(API)/ρ(base)**")
         st.write(f"ρ(base) = **{base_density:.4f} g/mL**")
@@ -162,38 +156,29 @@ if submitted:
         for a in apis:
             st.write(f"- {a['name']}: DF = **{a['df']:.4f}** (g API per 1 g base)")
 
-    # Step 4
     st.markdown("**Step 4: Base displaced by APIs**")
     st.write(f"Per unit displaced base = **{displaced_per_unit:.4f} g**; Batch displaced base = **{displaced_batch:.4f} g**")
 
-    # Step 5
     st.markdown("**Step 5: Required base**")
     st.write(f"Per unit required base = **{required_base_per_unit_out:.4f} g**; Batch required base = **{required_base_batch:.4f} g**")
 
     st.divider()
 
-    # -------------------------
-    # Capacity & Sanity Checks
-    # -------------------------
+    # ===== Capacity & sanity checks =====
     st.markdown("### Capacity & Sanity Checks")
     if required_base_per_unit < 0:
-        st.error("**Negative base per unit (pre-overage)** — API displacement exceeds blank capacity. Consider a larger mold (higher blank weight) or reduce API load.")
+        st.error("**Negative base per unit (pre-overage)** — API displacement exceeds blank capacity.")
     else:
         st.success("Per-unit base amount is non-negative.")
 
     if displaced_per_unit > blank_unit_weight_g:
-        st.warning("**API volume alone exceeds blank weight** — The APIs displace more base than the mold is intended to hold.")
-
+        st.warning("**API volume alone exceeds blank weight** — APIs displace more base than the mold holds.")
     if base_density <= 0:
         st.error("Base density must be > 0.")
 
-    # -------------------------
-    # Error Checks & Coaching (numeric demonstration)
-    # -------------------------
+    # ===== Error coaching (only in density mode) =====
     st.markdown("### Error Checks & Coaching")
-
     if api_mode == "Density (ρ)":
-        # WRONG #1: multiply instead of divide (reversing Step 3 logic)
         wrong_displaced_per_unit = 0.0
         for a in apis:
             ratio = a["rho"] / base_density
@@ -208,7 +193,6 @@ if submitted:
             f"(off by **{diff:.4f} g**). Remember: Step 3 ratio is ρ(API)/ρ(base), and Step 4 is **divide** total API weight by that ratio."
         )
 
-        # WRONG #2: subtract API mass directly from blank base
         direct_subtract_required_batch = est_blank_batch - total_api_batch
         st.markdown(
             f"**Another mistake:** Subtracting API weight directly from the blank base would give **{direct_subtract_required_batch:.4f} g**, "
@@ -220,7 +204,11 @@ if submitted:
             "This is algebraically identical to dividing by the Step-3 ratio."
         )
     else:
-        st.info("In **DF mode**, compute displaced base with: per-unit displaced base = Σ(m_i / DF_i). Avoid subtracting API mass directly from blank base.")
+        st.info("In **DF mode**, per-unit displaced base = Σ(m_i / DF_i). Avoid subtracting API mass directly from blank base.")
+
+else:
+    st.info("Enter inputs in the sidebar and click **Calculate** to see results.")
+
 
     # -------------------------
     # Minimal export (CSV-like text)
@@ -251,5 +239,3 @@ if submitted:
     ]
     csv_text = "\n".join(lines)
     st.download_button("Download results (CSV)", data=csv_text, file_name="suppository_calculation.csv", mime="text/csv")
-else:
-    st.info("Enter inputs in the sidebar and click **Calculate** to see results.")
