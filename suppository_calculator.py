@@ -9,11 +9,11 @@ LOGO_PATH = APP_DIR / "logo.png"
 
 st.markdown("""
 <style>
-left, right = st.columns([1, 9])
-with left:
-    st.image(LOGO_PATH, width=150)  # your path/size
-with right:
-    st.markdown("<h1 style='margin:0;padding:0;line-height:1'>💬 Suppository Base Calculator</h1>", unsafe_allow_html=True)
+/* shrink spacing under images and above/below h1 */
+div.stImage { margin-bottom: 0.15rem; }
+h1 { margin-top: 0.15rem; margin-bottom: 0.15rem; line-height: 1.05; }
+</style>
+""", unsafe_allow_html=True)
 
 st.image(Image.open(LOGO_PATH), width=150)
 st.markdown("<h1>💬 Suppository Base Calculator</h1>", unsafe_allow_html=True)
