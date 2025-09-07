@@ -5,7 +5,7 @@ from PIL import Image
 st.set_page_config(page_title="Suppository Calculator — Chat", layout="centered")
 
 APP_DIR = Path(__file__).parent
-LOGO_PATH = APP_DIR / "assets" / "logo.jpg"   # <-- adjust if png
+LOGO_PATH = APP_DIR / "logo.jpg"
 
 if LOGO_PATH.exists():
     st.image(Image.open(LOGO_PATH), width=200)
