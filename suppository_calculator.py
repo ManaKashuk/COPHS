@@ -212,9 +212,8 @@ if submitted:
 else:
     st.info("Enter inputs in the sidebar and click **Calculate** to see results.")
     
-st.markdown(
-    "**Tip:** For a single API, Step 4 can be written as: Base displaced = Total API × (ρ(base)/ρ(API)). "
-    "This is algebraically identical to dividing by the Step-3 ratio."
-    )
+    st.markdown("---")
+st.markdown("**Tip:** For a single API, Step 4 can be written as: Base displaced = Total API × (ρ(base)/ρ(API)). "
+            "This is algebraically identical to dividing by the Step-3 ratio.")
     
 st.caption("🧑‍🎓Educational tool only; verify with your PI/Instructor📚")
