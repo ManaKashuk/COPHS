@@ -8,18 +8,18 @@ import streamlit as st
 
 st.set_page_config(page_title="Suppository Base Calculator — 5-Step", layout="centered")
 APP_DIR = Path(__file__).parent
-LOGO_PATH = APP_DIR / "COPHS_logo.png"
+LOGO_PATH = APP_DIR / "logo.png"
 
 # CSS to reduce the space between the image block and the title
 st.markdown("""
 <style>
 /* shrink spacing under images and above/below h1 */
-div.stImage { margin-bottom: 0.15rem; }
+div.stImage { margin-bottom: -2rem; }
 h1 { margin-top: 0.15rem; margin-bottom: 0.15rem; line-height: 1.05; }
 </style>
 """, unsafe_allow_html=True)
 
-st.image(Image.open(LOGO_PATH), width=200)
+st.image(Image.open(LOGO_PATH), width=150)
 st.markdown("<h1>💬 Suppository Base Calculator (GPT-style)</h1>", unsafe_allow_html=True)
 st.caption("Chat with the tutor to compute the required base using the 5-step density-ratio method.")
 
