@@ -3,13 +3,9 @@ import re
 import json
 import streamlit as st
 
-st.set_page_config(page_title="Suppository Calculator — Chat", layout="centered")
-st.title("💬 Suppository Base Calculator (GPT‑style)")
-st.caption("Chat with the tutor to compute the required base using the 5‑step density‑ratio method.")
-
-# Load and display the COPHS logo at the top
-logo = Image.open("COPHS logo.jpg")
-st.image(logo, width=200)
+st.image("COPHS logo.jpg", width=200)   # put the file in the same folder
+st.title("💬 Suppository Base Calculator (GPT-style)")
+st.caption("Chat with the tutor to compute the required base using the 5-step density-ratio method.")
 
 # --- Utilities ---
 def parse_floats(pattern, text, flags=re.I):
