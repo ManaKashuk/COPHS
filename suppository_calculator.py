@@ -14,16 +14,14 @@ else:
 
 st.markdown("""
 <style>
-h1 { margin: 0; line-height: 1.05; }
+/* shrink spacing under images and above/below h1 */
+div.stImage { margin-bottom: 0.15rem; }
+h1 { margin-top: 0.15rem; margin-bottom: 0.15rem; line-height: 1.05; }
 </style>
 """, unsafe_allow_html=True)
 
-left, right = st.columns([1, 9])
-with left:
-    st.image(Image.open(LOGO_PATH), width=64)  # tweak width to your liking
-with right:
-    st.markdown("<h1>💬 Suppository Base Calculator (GPT-style)</h1>", unsafe_allow_html=True)
-
+st.image(Image.open(LOGO_PATH), width=200)
+st.markdown("<h1>💬 Suppository Base Calculator (GPT-style)</h1>", unsafe_allow_html=True)
 st.caption("Chat with the tutor to compute the required base using the 5-step density-ratio method.")
 
 with st.expander("Method (5 steps)", expanded=False):
