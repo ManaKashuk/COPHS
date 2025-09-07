@@ -1,11 +1,17 @@
-
-from PIL import Image
+from pathlib import Path
 import streamlit as st
+from PIL import Image
 
 st.set_page_config(page_title="Suppository Calculator — Chat", layout="centered")
 
-logo = Image.open("COPHS_logo.jpg") 
-st.image(logo, width=200)
+APP_DIR = Path(__file__).parent
+LOGO_PATH = APP_DIR / "assets" / "COPHS_logo.jpg"   # <-- adjust if png
+
+if LOGO_PATH.exists():
+    st.image(Image.open(LOGO_PATH), width=200)
+else:
+    st.warning(f"Logo not found at: {LOGO_PATH}")
+
 st.title("💬 Suppository Base Calculator (GPT-style)")
 st.caption("Chat with the tutor to compute the required base using the 5-step density-ratio method.")
 
