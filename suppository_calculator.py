@@ -7,21 +7,35 @@ from PIL import Image
 import streamlit as st
 
 st.set_page_config(page_title="Suppository Base Calculator — 5-Step", layout="centered")
-APP_DIR = Path(__file__).parent
-LOGO_PATH = APP_DIR / "logo.png"
 
-# CSS to reduce the space between the image block and the title
-st.markdown("""
+# --- Compact header styling (minimal spacing) ---
+st.markdown('''
 <style>
-/* shrink spacing under images and above/below h1 */
-div.stImage { margin-bottom: -2rem; }
-h1 { margin-top: 0.15rem; margin-bottom: 0.15rem; line-height: 1.05; }
+div.stImage { margin: 0 !important; }
+h1 { margin: 0 !important; padding: 0 !important; line-height: 1 !important; }
+.block-container { padding-top: 0.4rem !important; }
 </style>
-""", unsafe_allow_html=True)
+''', unsafe_allow_html=True)
 
-st.image(Image.open(LOGO_PATH), width=150)
-st.markdown("<h1>Suppository Base Calculator</h1>", unsafe_allow_html=True)
-st.markdown("💬 Chat with the tutor to compute the required base using the 5-step density-ratio method.")
+# --- Logo (robust relative path) ---
+APP_DIR = Path(__file__).parent
+candidates = [
+    APP_DIR / "COPHS_logo.png",
+    APP_DIR / "COPHS_logo.jpg",
+    APP_DIR / "assets" / "COPHS_logo.png",
+    APP_DIR / "assets" / "COPHS_logo.jpg",
+    APP_DIR / "logo.png",
+    APP_DIR / "logo.jpg",
+]
+logo_path = next((p for p in candidates if p.exists()), None)
+
+cols = st.columns([1, 9])
+with cols[0]:
+    if logo_path:
+        st.image(Image.open(logo_path), width=64)
+with cols[1]:
+    st.markdown("<h1>Suppository Base Calculator — 5-Step</h1>", unsafe_allow_html=True)
+st.caption("Batch calculator using the density-ratio method with pharmacist-friendly checks and coaching.")
 
 with st.expander("Method (5 steps)", expanded=False):
     st.markdown("""
@@ -64,34 +78,50 @@ with st.sidebar.form("calc_form"):
     )
 
     st.subheader("Active Ingredients (per suppository)")
-    st.sidebar.markdown("---")
-    max_apis = st.sidebar.number_input("Number of API components", min_value=1, max_value=5, value=1, step=1)
-    
-    api_rows = []
+    max_apis = st.number_input("How many API components?", min_value=1, max_value=6, value=1, step=1)
+    apis = []
     for i in range(int(max_apis)):
-        with st.sidebar.expander(f"API {i+1}", expanded=(i==0)):
-            name = st.text_input(f"Name for API {i+1}", value=f"API {i+1}", key=f"name_{i}")
-            unit = st.selectbox(f"Amount per suppository - unit ({i+1})", options=["mg", "g"], index=0, key=f"unit_{i}")
-            amt = st.number_input(f"Amount per suppository ({unit}) - API {i+1}", min_value=0.0, value=200.0 if i==0 else 0.0, step=0.01, format="%.4f", key=f"amt_{i}")
-            rho = st.number_input(f"Density ρ(API {i+1}) (g/mL)", min_value=0.0001, value=3.0 if i==0 else 1.0, step=0.01, format="%.4f", key=f"rho_{i}")
-        # convert to grams
-        amt_g = amt/1000.0 if unit == "mg" else amt
-        api_rows.append((name, amt_g, rho))
-       
-        st.markdown("---")
-        st.subheader("Pharmacy Controls")
-        overage_pct = st.number_input("Overage for base to cover loss (%)", min_value=0.0, value=0.0, step=0.5)
-        round_step = st.selectbox("Round required base to nearest", ["none", "0.001 g", "0.01 g", "0.1 g"], index=1)
-    
-        submitted = st.form_submit_button("Calculate")
-    
-    def round_to(x, step_label):
-        if step_label == "none":
-            return x
-        step = {"0.001 g": 0.001, "0.01 g": 0.01, "0.1 g": 0.1}[step_label]
-        if step <= 0:
-            return x
-        return round(x / step) * step
+        st.markdown(f"**API {i+1}**")
+        cols = st.columns([2, 1, 1, 1])
+        with cols[0]:
+            name = st.text_input(f"Name (API {i+1})", value=f"API {i+1}", key=f"name_{i}")
+        with cols[1]:
+            amt_value = st.number_input(
+                f"Amount ({i+1})", min_value=0.0, value=200.0 if i == 0 else 0.0, step=0.01, format="%.4f", key=f"amt_{i}"
+            )
+        with cols[2]:
+            unit = st.selectbox(f"Unit ({i+1})", ["mg", "g"], index=0, key=f"unit_{i}")
+        with cols[3]:
+            if api_mode == "Density (ρ)":
+                rho = st.number_input(
+                    f"ρ(API {i+1}) (g/mL)", min_value=0.0001, value=3.00 if i == 0 else 1.00, step=0.01, format="%.4f", key=f"rho_{i}"
+                )
+                df = None
+            else:
+                # DF mode: displacement factor DF = grams of API that displace 1 gram of base
+                df = st.number_input(
+                    f"DF(API {i+1}) (g API per 1 g base)", min_value=0.0001, value=1.50 if i == 0 else 1.00,
+                    step=0.01, format="%.4f", key=f"df_{i}"
+                )
+                rho = None
+
+        amt_g = amt_value / 1000.0 if unit == "mg" else amt_value
+        apis.append({"name": name, "amt_g": amt_g, "rho": rho, "df": df})
+
+    st.markdown("---")
+    st.subheader("Pharmacy Controls")
+    overage_pct = st.number_input("Overage for base to cover loss (%)", min_value=0.0, value=0.0, step=0.5)
+    round_step = st.selectbox("Round required base to nearest", ["none", "0.001 g", "0.01 g", "0.1 g"], index=1)
+
+    submitted = st.form_submit_button("Calculate")
+
+def round_to(x, step_label):
+    if step_label == "none":
+        return x
+    step = {"0.001 g": 0.001, "0.01 g": 0.01, "0.1 g": 0.1}[step_label]
+    if step <= 0:
+        return x
+    return round(x / step) * step
 
 # -------------------------
 # Calculations after submit
@@ -139,14 +169,20 @@ if submitted:
     # Derived per-unit after rounding batch (approx evenly split)
     required_base_per_unit_out = required_base_batch / N
 
-    # ===== Display results =====
+    # -------------------------
+    # Stepwise Output
+    # -------------------------
     st.markdown("### Step-by-Step Results")
+
+    # Step 1
     st.markdown("**Step 1: Total API amount**")
     st.write(f"Per unit = **{total_api_per_unit:.4f} g**; Batch (×{N}) = **{total_api_batch:.4f} g**")
 
+    # Step 2
     st.markdown("**Step 2: Estimated blank base**")
     st.write(f"Per unit = **{blank_unit_weight_g:.4f} g**; Batch (×{N}) = **{est_blank_batch:.4f} g**")
 
+    # Step 3
     if api_mode == "Density (ρ)":
         st.markdown("**Step 3: Density ratio ρ(API)/ρ(base)**")
         st.write(f"ρ(base) = **{base_density:.4f} g/mL**")
@@ -157,29 +193,38 @@ if submitted:
         for a in apis:
             st.write(f"- {a['name']}: DF = **{a['df']:.4f}** (g API per 1 g base)")
 
+    # Step 4
     st.markdown("**Step 4: Base displaced by APIs**")
     st.write(f"Per unit displaced base = **{displaced_per_unit:.4f} g**; Batch displaced base = **{displaced_batch:.4f} g**")
 
+    # Step 5
     st.markdown("**Step 5: Required base**")
     st.write(f"Per unit required base = **{required_base_per_unit_out:.4f} g**; Batch required base = **{required_base_batch:.4f} g**")
 
     st.divider()
 
-    # ===== Capacity & sanity checks =====
+    # -------------------------
+    # Capacity & Sanity Checks
+    # -------------------------
     st.markdown("### Capacity & Sanity Checks")
     if required_base_per_unit < 0:
-        st.error("**Negative base per unit (pre-overage)** — API displacement exceeds blank capacity.")
+        st.error("**Negative base per unit (pre-overage)** — API displacement exceeds blank capacity. Consider a larger mold (higher blank weight) or reduce API load.")
     else:
         st.success("Per-unit base amount is non-negative.")
 
     if displaced_per_unit > blank_unit_weight_g:
-        st.warning("**API volume alone exceeds blank weight** — APIs displace more base than the mold holds.")
+        st.warning("**API volume alone exceeds blank weight** — The APIs displace more base than the mold is intended to hold.")
+
     if base_density <= 0:
         st.error("Base density must be > 0.")
 
-    # ===== Error coaching (only in density mode) =====
+    # -------------------------
+    # Error Checks & Coaching (numeric demonstration)
+    # -------------------------
     st.markdown("### Error Checks & Coaching")
+
     if api_mode == "Density (ρ)":
+        # WRONG #1: multiply instead of divide (reversing Step 3 logic)
         wrong_displaced_per_unit = 0.0
         for a in apis:
             ratio = a["rho"] / base_density
@@ -194,6 +239,7 @@ if submitted:
             f"(off by **{diff:.4f} g**). Remember: Step 3 ratio is ρ(API)/ρ(base), and Step 4 is **divide** total API weight by that ratio."
         )
 
+        # WRONG #2: subtract API mass directly from blank base
         direct_subtract_required_batch = est_blank_batch - total_api_batch
         st.markdown(
             f"**Another mistake:** Subtracting API weight directly from the blank base would give **{direct_subtract_required_batch:.4f} g**, "
@@ -205,11 +251,7 @@ if submitted:
             "This is algebraically identical to dividing by the Step-3 ratio."
         )
     else:
-        st.info("In **DF mode**, per-unit displaced base = Σ(m_i / DF_i). Avoid subtracting API mass directly from blank base.")
-
-else:
-    st.info("Enter inputs in the sidebar and click **Calculate** to see results.")
-
+        st.info("In **DF mode**, compute displaced base with: per-unit displaced base = Σ(m_i / DF_i). Avoid subtracting API mass directly from blank base.")
 
     # -------------------------
     # Minimal export (CSV-like text)
@@ -222,6 +264,23 @@ else:
         f"Base density (g/mL),{base_density:.4f}",
         f"Mode,{api_mode}",
     ]
-
+    for a in apis:
+        if api_mode == "Density (ρ)":
+            lines.append(f"{a['name']} amount per unit (g),{a['amt_g']:.4f},rho,{a['rho']:.4f}")
+        else:
+            lines.append(f"{a['name']} amount per unit (g),{a['amt_g']:.4f},DF,{a['df']:.4f}")
+    lines += [
+        f"Total API per unit (g),{total_api_per_unit:.4f}",
+        f"Total API batch (g),{total_api_batch:.4f}",
+        f"Estimated blank batch (g),{est_blank_batch:.4f}",
+        f"Displaced base per unit (g),{displaced_per_unit:.4f}",
+        f"Displaced base batch (g),{displaced_batch:.4f}",
+        f"Required base batch (g) (after overage, rounded),{required_base_batch:.4f}",
+        f"Required base per unit (g) (from rounded batch),{required_base_per_unit_out:.4f}",
+        f"Overage (%),{overage_pct:.2f}",
+        f"Rounding step,{round_step}",
+    ]
     csv_text = "\n".join(lines)
     st.download_button("Download results (CSV)", data=csv_text, file_name="suppository_calculation.csv", mime="text/csv")
+else:
+    st.info("Enter inputs in the sidebar and click **Calculate** to see results.")
