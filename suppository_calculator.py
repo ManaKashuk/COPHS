@@ -12,7 +12,17 @@ if LOGO_PATH.exists():
 else:
     st.warning(f"Logo not found at: {LOGO_PATH}")
 
-st.title("💬 Suppository Base Calculator")
+st.markdown("""
+<style>
+h1 { margin: 0; line-height: 1.05; }
+</style>
+""", unsafe_allow_html=True)
+
+left, right = st.columns([1, 9])
+with left:
+    st.image(Image.open(LOGO_PATH), width=64)  # tweak width to your liking
+with right:
+st.markdown("<h1>💬 Suppository Base Calculator</h1>", unsafe_allow_html=True)
 st.caption("Compute the required base using the 5-step density-ratio method.")
 
 with st.expander("Method (5 steps)", expanded=False):
