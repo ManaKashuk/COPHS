@@ -10,7 +10,7 @@ LOGO_PATH = APP_DIR / "logo.png"
 st.markdown("""
 <style>
 /* shrink spacing under images and above/below h1 */
-div.stImage { margin-bottom: -3rem; }
+div.stImage { margin-bottom: -2rem; }
 h1 { margin-top: 0.15rem; margin-bottom: 0.15rem; line-height: 1.05; }
 </style>
 """, unsafe_allow_html=True)
