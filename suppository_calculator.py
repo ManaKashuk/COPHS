@@ -116,7 +116,7 @@ with st.sidebar.form("calc_form"):
 
 # Calculations after submit
 if submitted:
-    # ... do math & show results ...
+# ... do math & show results ...
 else:
     st.info("Enter inputs in the sidebar and click **Calculate** to see results.")
 
