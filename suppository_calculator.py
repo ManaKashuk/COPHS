@@ -32,12 +32,6 @@ with st.expander("Method (5 steps)", expanded=False):
 # -------------------------
 # Sidebar FORM for inputs
 # -------------------------
-st.sidebar.subheader("Active Ingredients (per suppository)")
-max_apis = st.sidebar.number_input("How many API components?", min_value=1, max_value=6, value=1, step=1)
-with st.sidebar.form("calc_form"):
-    st.header("Batch Inputs")
-    N = st.number_input("Number of suppositories (N)", min_value=1, value=12, step=1)
-
     # Quick-pick bases
     st.subheader("Base")
     base_options = {
@@ -61,8 +55,11 @@ with st.sidebar.form("calc_form"):
         index=0,
         help="Use DF if you have mold-specific displacement factors for your APIs.",
     )
-
-    st.subheader("Active Ingredients (per suppository)")
+    st.sidebar.subheader("Active Ingredients (per suppository)")
+max_apis = st.sidebar.number_input("How many API components?", min_value=1, max_value=6, value=1, step=1)
+with st.sidebar.form("calc_form"):
+    st.header("Batch Inputs")
+    N = st.number_input("Number of suppositories (N)", min_value=1, value=12, step=1)
     apis = []
     for i in range(int(max_apis)):
         st.markdown(f"**API {i+1}**")
