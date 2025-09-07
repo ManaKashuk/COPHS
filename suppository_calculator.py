@@ -8,7 +8,7 @@ APP_DIR = Path(__file__).parent
 LOGO_PATH = APP_DIR / "logo.png"
 
 if LOGO_PATH.exists():
-    st.image(Image.open(LOGO_PATH), width=200)
+    st.image(Image.open(LOGO_PATH), width=150)
 else:
     st.warning(f"Logo not found at: {LOGO_PATH}")
 
