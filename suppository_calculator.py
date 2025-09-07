@@ -59,8 +59,8 @@ with st.sidebar.form("calc_form"):
         index=0,
         help="Use DF if you have mold-specific displacement factors for your APIs.",
     )
-
-    st.markdown("#### Active ingredients (per suppository)")
+    st.markdown("---")
+    st.subheader("Active ingredients (per suppository)")
 max_apis = st.number_input("How many API components?", min_value=1, max_value=5, value=1, step=1)
 apis = []
 for i in range(int(max_apis)):
