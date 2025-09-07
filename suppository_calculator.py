@@ -221,21 +221,6 @@ else:
         f"Base density (g/mL),{base_density:.4f}",
         f"Mode,{api_mode}",
     ]
-    for a in apis:
-        if api_mode == "Density (ρ)":
-            lines.append(f"{a['name']} amount per unit (g),{a['amt_g']:.4f},rho,{a['rho']:.4f}")
-        else:
-            lines.append(f"{a['name']} amount per unit (g),{a['amt_g']:.4f},DF,{a['df']:.4f}")
-    lines += [
-        f"Total API per unit (g),{total_api_per_unit:.4f}",
-        f"Total API batch (g),{total_api_batch:.4f}",
-        f"Estimated blank batch (g),{est_blank_batch:.4f}",
-        f"Displaced base per unit (g),{displaced_per_unit:.4f}",
-        f"Displaced base batch (g),{displaced_batch:.4f}",
-        f"Required base batch (g) (after overage, rounded),{required_base_batch:.4f}",
-        f"Required base per unit (g) (from rounded batch),{required_base_per_unit_out:.4f}",
-        f"Overage (%),{overage_pct:.2f}",
-        f"Rounding step,{round_step}",
-    ]
+
     csv_text = "\n".join(lines)
     st.download_button("Download results (CSV)", data=csv_text, file_name="suppository_calculation.csv", mime="text/csv")
