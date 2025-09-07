@@ -1,9 +1,14 @@
 
 import re
 import json
+from PIL import Image
 import streamlit as st
 
-st.image("COPHS_logo.jpg", width=200)   # put the file in the same folder
+
+st.set_page_config(page_title="Suppository Calculator — Chat", layout="centered")
+
+logo = Image.open("COPHS logo.jpg")     # supports jpg/png
+st.image(logo, width=200)
 st.title("💬 Suppository Base Calculator (GPT-style)")
 st.caption("Chat with the tutor to compute the required base using the 5-step density-ratio method.")
 
