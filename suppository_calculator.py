@@ -255,3 +255,16 @@ st.markdown("**Tip:** For a single API, Step 4 can be written as: Base displaced
             "This is algebraically identical to dividing by the Step-3 ratio.")
     
 st.caption("🧑‍🎓This calculator is intended for academic and clinical training purposes. Always confirm calculations with your supervising pharmacist or instructor.📚")
+
+st.markdown(
+    """
+    <hr style="margin-top:2rem; margin-bottom:0.5rem;">
+    <div style="text-align:center; font-size:0.9rem; color:gray;">
+        © 2025 COPHS | For citation: <b>COPHS Suppository Base Calculator</b><br>
+        <a href="https://cophs-calculator.streamlit.app/" target="_blank">
+        https://cophs-calculator.streamlit.app/</a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
