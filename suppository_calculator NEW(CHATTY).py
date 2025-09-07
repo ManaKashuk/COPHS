@@ -64,50 +64,33 @@ with st.sidebar.form("calc_form"):
     )
 
     st.subheader("Active Ingredients (per suppository)")
-    max_apis = st.number_input("How many API components?", min_value=1, max_value=6, value=1, step=1)
-    apis = []
+    st.sidebar.markdown("---")
+    max_apis = st.sidebar.number_input("Number of API components", min_value=1, max_value=5, value=1, step=1)
+    
+    api_rows = []
     for i in range(int(max_apis)):
-        st.markdown(f"**API {i+1}**")
-        cols = st.columns([2, 1, 1, 1])
-        with cols[0]:
-            name = st.text_input(f"Name (API {i+1})", value=f"API {i+1}", key=f"name_{i}")
-        with cols[1]:
-            amt_value = st.number_input(
-                f"Amount ({i+1})", min_value=0.0, value=200.0 if i == 0 else 0.0, step=0.01, format="%.4f", key=f"amt_{i}"
-            )
-        with cols[2]:
-            unit = st.selectbox(f"Unit ({i+1})", ["mg", "g"], index=0, key=f"unit_{i}")
-        with cols[3]:
-            if api_mode == "Density (ρ)":
-                rho = st.number_input(
-                    f"ρ(API {i+1}) (g/mL)", min_value=0.0001, value=3.00 if i == 0 else 1.00, step=0.01, format="%.4f", key=f"rho_{i}"
-                )
-                df = None
-            else:
-                # DF mode: displacement factor DF = grams of API that displace 1 gram of base
-                df = st.number_input(
-                    f"DF(API {i+1}) (g API per 1 g base)", min_value=0.0001, value=1.50 if i == 0 else 1.00,
-                    step=0.01, format="%.4f", key=f"df_{i}"
-                )
-                rho = None
-
-        amt_g = amt_value / 1000.0 if unit == "mg" else amt_value
-        apis.append({"name": name, "amt_g": amt_g, "rho": rho, "df": df})
-
-    st.markdown("---")
-    st.subheader("Pharmacy Controls")
-    overage_pct = st.number_input("Overage for base to cover loss (%)", min_value=0.0, value=0.0, step=0.5)
-    round_step = st.selectbox("Round required base to nearest", ["none", "0.001 g", "0.01 g", "0.1 g"], index=1)
-
-    submitted = st.form_submit_button("Calculate")
-
-def round_to(x, step_label):
-    if step_label == "none":
-        return x
-    step = {"0.001 g": 0.001, "0.01 g": 0.01, "0.1 g": 0.1}[step_label]
-    if step <= 0:
-        return x
-    return round(x / step) * step
+        with st.sidebar.expander(f"API {i+1}", expanded=(i==0)):
+            name = st.text_input(f"Name for API {i+1}", value=f"API {i+1}", key=f"name_{i}")
+            unit = st.selectbox(f"Amount per suppository - unit ({i+1})", options=["mg", "g"], index=0, key=f"unit_{i}")
+            amt = st.number_input(f"Amount per suppository ({unit}) - API {i+1}", min_value=0.0, value=200.0 if i==0 else 0.0, step=0.01, format="%.4f", key=f"amt_{i}")
+            rho = st.number_input(f"Density ρ(API {i+1}) (g/mL)", min_value=0.0001, value=3.0 if i==0 else 1.0, step=0.01, format="%.4f", key=f"rho_{i}")
+        # convert to grams
+        amt_g = amt/1000.0 if unit == "mg" else amt
+        api_rows.append((name, amt_g, rho))
+        st.markdown("---")
+        st.subheader("Pharmacy Controls")
+        overage_pct = st.number_input("Overage for base to cover loss (%)", min_value=0.0, value=0.0, step=0.5)
+        round_step = st.selectbox("Round required base to nearest", ["none", "0.001 g", "0.01 g", "0.1 g"], index=1)
+    
+        submitted = st.form_submit_button("Calculate")
+    
+    def round_to(x, step_label):
+        if step_label == "none":
+            return x
+        step = {"0.001 g": 0.001, "0.01 g": 0.01, "0.1 g": 0.1}[step_label]
+        if step <= 0:
+            return x
+        return round(x / step) * step
 
 # -------------------------
 # Calculations after submit
