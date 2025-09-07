@@ -66,12 +66,10 @@ apis = []
 for i in range(int(max_apis)):
     cols = st.columns([2, 1, 1, 1])
     with cols[0]:
-        name = st.text_input(f"Name (API {i+1})", value=f"API {i+1}")
-    with cols[1]:
         amt_value = st.number_input(f"Amount ({i+1})", min_value=0.0, value=200.0 if i==0 else 0.0, step=0.01, format="%.4f", key=f"amt_{i}")
-    with cols[2]:
+    with cols[1]:
         unit = st.selectbox(f"Unit ({i+1})", ["mg", "g"], index=0, key=f"unit_{i}")
-    with cols[3]:
+    with cols[2]:
         rho = st.number_input(f"ρ(API {i+1}) (g/mL)", min_value=0.0001, value=3.0 if i==0 else 1.0, step=0.01, format="%.4f", key=f"rho_{i}")
     amt_g = amt_value/1000.0 if unit == "mg" else amt_value
     apis.append({"name": name, "amt_g": amt_g, "rho": rho})
