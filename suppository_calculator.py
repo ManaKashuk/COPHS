@@ -114,51 +114,11 @@ with st.sidebar.form("calc_form"):
     submitted = st.form_submit_button("Calculate")
 
 
-# -------------------------
 # Calculations after submit
-# -------------------------
 if submitted:
-    # Step 1: total API (batch)
-    total_api_per_unit = sum(a["amt_g"] for a in apis)          # g per unit
-    total_api_batch = total_api_per_unit * N                     # g batch
-
-    # Step 2: estimated blank base (batch)
-    est_blank_batch = blank_unit_weight_g * N                    # g batch
-
-    # Step 3 & 4: displacement (supports Density or DF)
-    displaced_per_unit = 0.0
-    ratios = []  # for density mode reporting
-
-    if api_mode == "Density (ρ)":
-        for a in apis:
-            if not a["rho"] or a["rho"] <= 0:
-                st.error(f"{a['name']}: API density must be > 0.")
-                st.stop()
-            ratio = a["rho"] / base_density
-            ratios.append((a["name"], ratio, a["rho"]))
-            # per-unit displaced base mass for this API:
-            displaced_per_unit += (a["amt_g"] / ratio)  # g base per unit
-    else:  # DF mode
-        # DF = grams of API that displace 1 g base => displaced base per unit for API i = m_i / DF_i
-        for a in apis:
-            if not a["df"] or a["df"] <= 0:
-                st.error(f"{a['name']}: DF must be > 0.")
-                st.stop()
-            displaced_per_unit += (a["amt_g"] / a["df"])  # g base per unit
-
-    displaced_batch = displaced_per_unit * N
-    required_base_per_unit = blank_unit_weight_g - displaced_per_unit
-    required_base_batch = est_blank_batch - displaced_batch
-
-    # Apply overage to required base (batch)
-    if overage_pct > 0:
-        required_base_batch *= (1 + overage_pct / 100.0)
-
-    # Rounding
-    required_base_batch = round_to(required_base_batch, round_step)
-
-    # Derived per-unit after rounding batch (approx evenly split)
-    required_base_per_unit_out = required_base_batch / N
+    # ... do math & show results ...
+else:
+    st.info("Enter inputs in the sidebar and click **Calculate** to see results.")
 
     # -------------------------
     # Stepwise Output
