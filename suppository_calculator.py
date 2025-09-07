@@ -9,14 +9,11 @@ LOGO_PATH = APP_DIR / "logo.png"
 
 st.markdown("""
 <style>
-/* zero spacing under images and around h1 */
-div.stImage { margin: 0 !important; }
-h1 { margin: 0 !important; padding: 0 !important; line-height: 1 !important; }
-
-/* optional: reduce top padding of the whole page container */
-.block-container { padding-top: 0.25rem !important; }
-</style>
-""", unsafe_allow_html=True)
+left, right = st.columns([1, 9])
+with left:
+    st.image(LOGO_PATH, width=150)  # your path/size
+with right:
+    st.markdown("<h1 style='margin:0;padding:0;line-height:1'>💬 Suppository Base Calculator</h1>", unsafe_allow_html=True)
 
 st.image(Image.open(LOGO_PATH), width=150)
 st.markdown("<h1>💬 Suppository Base Calculator</h1>", unsafe_allow_html=True)
