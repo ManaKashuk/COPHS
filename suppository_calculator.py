@@ -11,9 +11,6 @@ st.markdown("""
 <style>
 /* shrink spacing under images and above/below h1 */
 div.stImage { margin-bottom: 0rem; }
-h1 { margin-top: 0rem; margin-bottom: 0rem; line-height: 0; }
-</style>
-""", unsafe_allow_html=True)
 
 st.image(Image.open(LOGO_PATH), width=150)
 st.markdown("<h1>💬 Suppository Base Calculator</h1>", unsafe_allow_html=True)
