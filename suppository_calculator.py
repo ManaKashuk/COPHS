@@ -86,16 +86,6 @@ st.write(f"**Total base displaced** (sum of all APIs) = **{base_displaced:.4f} g
 st.markdown("**Step 5: Required base**")
 st.write(f"Required base = Estimated blank base − Base displaced = {estimated_blank_base:.4f} − {base_displaced:.4f} = **{required_base:.4f} g**")
 
-# --- Error detection & coaching ---
-st.markdown("### Error Checks & Coaching")
-
-# 1) Reversed ratio error
-reversed_displaced = sum((amt_g * (base_density / rho)) for _, amt_g, rho in api_rows) * n  # identical to correct formula actually
-# The "reversed ratio" mistake usually means using ρ(base)/ρ(API) in step 3, then using API total ÷ that reversed ratio,
-# which leads to multiplying by ρ(API)/ρ(base). Let's simulate the mistake explicitly:
-wrong_displaced = sum((amt_g) * (rho / base_density) for _, amt_g, rho in api_rows) * n  # WRONG: total_api × ratio (instead of ÷)
-wrong_required = estimated_blank_base - wrong_displaced
-
 # 3) Sanity checks
 if required_base < 0:
     st.warning("The required base is negative. Your blank weight may be too small or API load too high for this mold.")
