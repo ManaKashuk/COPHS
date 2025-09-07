@@ -77,6 +77,7 @@ with st.sidebar.form("calc_form"):
         # convert to grams
         amt_g = amt/1000.0 if unit == "mg" else amt
         api_rows.append((name, amt_g, rho))
+       
         st.markdown("---")
         st.subheader("Pharmacy Controls")
         overage_pct = st.number_input("Overage for base to cover loss (%)", min_value=0.0, value=0.0, step=0.5)
