@@ -18,7 +18,7 @@ h1 { margin-top: 0.15rem; margin-bottom: 0.15rem; line-height: 1.05; }
 """, unsafe_allow_html=True)
 
 st.image(Image.open(LOGO_PATH), width=500)
-st.markdown("<h1>🗨️ Chat with an AI tutor to compute the required base using the 5-step density-ratio method.</div>", unsafe_allow_html=True)
+st.markdown("<h2>🗨️ Chat with an AI tutor to compute the required base using the 5-step density-ratio method.</div>", unsafe_allow_html=True)
 
 with st.expander("Method (5 steps)", expanded=False):
     st.markdown("""
