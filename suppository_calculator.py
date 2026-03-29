@@ -9,14 +9,6 @@ import streamlit as st
 APP_DIR = Path(__file__).parent
 LOGO_PATH = APP_DIR / "logo.png"
 
-st.markdown("""
-<style>
-/* shrink spacing under images and above/below h1 */
-div.stImage { margin-bottom: -2.5rem; }
-h1 { margin-top: 0.15rem; margin-bottom: 0.15rem; line-height: 1.05; }
-</style>
-""", unsafe_allow_html=True)
-
 st.image(Image.open(LOGO_PATH), width=500)
 st.markdown("<h4>🗨️ Chat with an AI tutor to compute the required base using the 5-step density-ratio method.</div>", unsafe_allow_html=True)
 
