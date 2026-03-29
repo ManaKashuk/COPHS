@@ -9,7 +9,7 @@ import streamlit as st
 APP_DIR = Path(__file__).parent
 LOGO_PATH = APP_DIR / "logo.png"
 
-st.image(Image.open(LOGO_PATH), width=600)
+st.image(Image.open(LOGO_PATH), width=800)
 st.markdown("<h5>🗨️ Chat with an AI tutor to compute the required base using the 5-step density-ratio method.</div>", unsafe_allow_html=True)
 
 with st.expander("Method (5 steps)", expanded=False):
