@@ -10,7 +10,7 @@ APP_DIR = Path(__file__).parent
 LOGO_PATH = APP_DIR / "logo.png"
 
 st.image(Image.open(LOGO_PATH), width=800)
-st.markdown("<h4>🗨️ Chat with an AI tutor to compute the required base using the 5-step density-ratio method.</div>", unsafe_allow_html=True)
+st.markdown("<h3>🗨️ Chat with an AI tutor to compute the required base using the 5-step density-ratio method.</div>", unsafe_allow_html=True)
 
 with st.expander("Method (5 steps)", expanded=False):
     st.markdown("""
